@@ -21,12 +21,16 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
   protected args!: Args<T>
   protected flags!: Flags<T>
 
+  // define flags that can be inherited by any command that extends BaseCommand
   protected async ensureSecureFile(filePath: string): Promise<void> {
     if (os.platform() !== 'win32') {
       try {
-        await fs.chmod(filePath, 0o600)
+        const stats = await fs.stat(filePath)
+        if ((stats.mode & 0o077) !== 0) {
+          this.warn(`Warning: The configuration file at ${filePath} has insecure permissions. Please restrict access to your user only.`)
+        }
       } catch (err) {
-        this.warn(`Could not set secure file permissions on ${filePath}: ${err}`)
+        this.warn(`Could not check file permissions on ${filePath}: ${err}`)
       }
     }
   }
@@ -130,4 +134,3 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     console.table(data)
   }
   }
-      
