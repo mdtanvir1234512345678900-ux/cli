@@ -133,5 +133,4 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     const data = input.map((i) => toRow(i))
     console.table(data)
   }
-  }
-    
+}
