@@ -12,6 +12,7 @@ export type Flags<T extends typeof Command> = Interfaces.InferredFlags<(typeof B
 export type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>
 
 export abstract class BaseCommand<T extends typeof Command> extends Command {
+  // define flags that can be inherited by any command that extends BaseCommand
   static baseFlags = {
     raw: Flags.boolean({char: 'r', description: 'Output raw JSON (defaults to a table)', required: false}),
   }
@@ -21,7 +22,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
   protected args!: Args<T>
   protected flags!: Flags<T>
 
-  // define flags that can be inherited by any command that extends BaseCommand
   protected async ensureSecureFile(filePath: string): Promise<void> {
     if (os.platform() !== 'win32') {
       try {
